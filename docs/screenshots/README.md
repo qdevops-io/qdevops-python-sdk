@@ -33,6 +33,25 @@ The README references two screenshots that need to be added by hand:
 - `architecture-hero.svg` — exported version of the Mermaid diagram in
   the README, generated via `mmdc -i README.md -o architecture-hero.svg`.
 
-Until these images land, the README will show broken-image icons in
-those two table cells. That's intentional — better a visible TODO than
-a faked screenshot.
+## Current state
+
+`run-detail.png` and `bench.png` exist in this folder as branded
+placeholder PNGs (slate panel, green "PLACEHOLDER" chip, the source URL
+to capture for replacement). They render inline in the main README so
+nobody sees broken-image icons or 404s.
+
+To replace them with real screenshots:
+
+```bash
+# 1. Capture the real images from the URLs in the table above.
+# 2. Drop them into this folder with the exact same filenames:
+mv ~/Downloads/screenshot-run.png docs/screenshots/run-detail.png
+mv ~/Downloads/screenshot-bench.png docs/screenshots/bench.png
+
+# 3. Commit. No README edits needed — it references these filenames
+#    already.
+```
+
+The placeholders themselves were generated with a small Pillow script
+(committed in this folder's history); they're easy to re-render if the
+brand colours change.
