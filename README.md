@@ -159,7 +159,23 @@ Three properties this architecture buys you:
 - **CI-native.** The SDK is a pure-Python HTTP client. No native deps, no GPU
   required to call it, no Qiskit version conflicts in your container.
 
-A deeper architecture walk-through lives in [`docs/architecture.md`](./docs/architecture.md).
+A deeper architecture walk-through with six more diagrams lives in
+[`docs/architecture.md`](./docs/architecture.md):
+
+- [Execution flow](./docs/architecture.md#execution-flow) — the full
+  state machine a run moves through, straight from the platform's
+  `RunEvent::KIND_*` constants.
+- [SQS orchestration](./docs/architecture.md#sqs-orchestration) — three
+  queues, three consumers, per-stage isolation, DLQ replay.
+- [Backend adapter flow](./docs/architecture.md#backend-adapter-flow) —
+  how `backend="ibm"` becomes a vendor SDK call without your credentials
+  ever leaving the worker.
+- [ECR image pinning](./docs/architecture.md#ecr-image-pinning) — why
+  environments pin by digest, not by tag.
+- [Reproducibility lifecycle](./docs/architecture.md#reproducibility-lifecycle) —
+  pin a recipe today, get bit-identical counts six months later.
+- [Rerun lineage](./docs/architecture.md#rerun-lineage) — `parent_run_id`
+  chains, `RunLineageService` diffs, and the run-tree.
 
 ## Screenshots
 
