@@ -1,0 +1,30 @@
+flowchart LR
+  subgraph Caller["Your code"]
+    direction TB
+    Script["script / notebook / CI"]
+    SDK["qdevops<br/>Python SDK"]
+    Script --> SDK
+  end
+
+  SDK -->|HTTPS<br/>Bearer PAT| API["api.qdevops.io<br/>(public REST API)"]
+  API -->|enqueue| Q[("per-env SQS queue")]
+  Q --> W["worker<br/>(Python on Fargate)"]
+
+  W --> SIM["simulator"]
+  W -->|user creds| IBM["IBM Quantum"]
+  W -->|user creds| BRK["AWS Braket"]
+
+  SIM -.->|counts + metrics| W
+  IBM -.->|counts + metrics| W
+  BRK -.->|counts + metrics| W
+
+  W -->|persist result| API
+  API -.->|"/api/runs/{id}/status"| SDK
+  API --> DASH["qdevops.io/bench<br/>(public dashboard)"]
+
+  classDef yours fill:#e8f1ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
+  classDef ours fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef theirs fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e;
+  class Script,SDK yours;
+  class API,Q,W,SIM,DASH ours;
+  class IBM,BRK theirs;

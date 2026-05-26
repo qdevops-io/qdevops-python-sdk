@@ -1,13 +1,24 @@
 # Diagram gallery
 
-All seven architecture diagrams from [`docs/architecture.md`](../architecture.md),
-exported as raster (PNG, 2× scale, ~50–130 KB) and vector (SVG, ~10–35 KB)
-for use in slides, blog posts, social cards, or any Markdown viewer that
-doesn't render Mermaid.
+Eight diagrams in total — the hero from the [main README](../../README.md)
+plus the seven deeper ones from [`docs/architecture.md`](../architecture.md),
+all exported as raster (PNG, 2× scale, ~50–130 KB) and vector (SVG,
+~10–35 KB) for use in slides, blog posts, social cards, or any Markdown
+viewer that doesn't render Mermaid.
 
 The Mermaid source for each diagram lives next to the export (`*.mmd`)
 so anyone can re-render or modify them with `mmdc` (see
 [Regenerating](#regenerating) below).
+
+## README overview (hero)
+
+The high-level system diagram from the main README — your code (blue)
+talks to our infrastructure (green) which talks to vendor backends
+(amber).
+
+![README hero](./readme_overview.png)
+
+Sources: [`readme_overview.mmd`](./readme_overview.mmd) · [SVG](./readme_overview.svg)
 
 ## End-to-end flow
 
@@ -123,6 +134,12 @@ done
 - **No semicolons inside message labels** for `sequenceDiagram`.
   Mermaid treats `;` as a statement terminator and the export will
   fail — even if GitHub's renderer is lenient enough to render anyway.
+- **Quote any flowchart edge label that contains `{`, `}`, `(`, or `)`.**
+  Mermaid's flowchart parser interprets these as node-shape delimiters
+  (`{x}` = diamond, `(x)` = round). An unquoted REST path like
+  `|/api/runs/{id}/status|` will crash the parse on `DIAMOND_START`.
+  Use the quoted form: `|"/api/runs/{id}/status"|`. Sequence diagrams
+  don't have this issue, only flowcharts.
 - **PNG at 2× scale, white background.** Keeps text crisp on Retina /
   high-DPI screens and works in light- and dark-themed READMEs alike.
 - **No proprietary fonts / colours.** Stick to the default Mermaid

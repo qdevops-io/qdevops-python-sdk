@@ -137,7 +137,7 @@ flowchart LR
   BRK -.->|counts + metrics| W
 
   W -->|persist result| API
-  API -.->|/api/runs/{id}/status| SDK
+  API -.->|"/api/runs/{id}/status"| SDK
   API --> DASH["qdevops.io/bench<br/>(public dashboard)"]
 
   classDef yours fill:#e8f1ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
