@@ -37,7 +37,7 @@ result = client.wait_for_run(submission.run_id).result
 print(result["counts"])  # {'00': 2031, '11': 2065}
 ```
 
-The SDK talks to `api.qdevops.io`, which queues your job, runs it on the backend
+The SDK talks to `qdevops.io`, which queues your job, runs it on the backend
 you asked for (simulator, IBM Quantum, AWS Braket), records duration and queue
 wait, and gives you back a structured result. Every run is reproducible by ID,
 visible on a [public benchmark dashboard](https://qdevops.io/bench), and pinnable
@@ -124,7 +124,7 @@ flowchart LR
     Script --> SDK
   end
 
-  SDK -->|HTTPS<br/>Bearer PAT| API["api.qdevops.io<br/>(public REST API)"]
+  SDK -->|HTTPS<br/>Bearer PAT| API["qdevops.io<br/>(public REST API)"]
   API -->|enqueue| Q[("per-env SQS queue")]
   Q --> W["worker<br/>(Python on Fargate)"]
 

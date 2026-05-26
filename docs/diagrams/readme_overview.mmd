@@ -6,7 +6,7 @@ flowchart LR
     Script --> SDK
   end
 
-  SDK -->|HTTPS<br/>Bearer PAT| API["api.qdevops.io<br/>(public REST API)"]
+  SDK -->|HTTPS<br/>Bearer PAT| API["qdevops.io<br/>(public REST API)"]
   API -->|enqueue| Q[("per-env SQS queue")]
   Q --> W["worker<br/>(Python on Fargate)"]
 

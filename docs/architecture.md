@@ -28,7 +28,7 @@ sequenceDiagram
     autonumber
     participant U as Your script
     participant S as qdevops SDK
-    participant A as api.qdevops.io
+    participant A as qdevops.io
     participant Q as SQS (per-env)
     participant W as Worker (Fargate)
     participant B as Backend<br/>(simulator / IBM / Braket)
@@ -119,7 +119,7 @@ so a sandbox project can never accidentally book a prod queue slot.
 
 ```mermaid
 flowchart LR
-    subgraph API["api.qdevops.io"]
+    subgraph API["qdevops.io"]
         D["Dispatcher<br/>(reads project.stage)"]
     end
 
@@ -199,7 +199,7 @@ flowchart LR
 ```
 
 - **Credentials never leave the worker.** The SDK doesn't ship your IBM
-  token to `api.qdevops.io` — the platform stores it encrypted in the
+  token to `qdevops.io` — the platform stores it encrypted in the
   vault and the worker pulls it just-in-time per run. Logs scrub the
   token before persistence (`EnvScrubDigestsCommand` handles cleanup).
 - **One result schema, many backends.** The normaliser is what makes
@@ -263,7 +263,7 @@ How "pinning" actually works from the user's perspective, end-to-end:
 sequenceDiagram
     autonumber
     participant U as User
-    participant API as api.qdevops.io
+    participant API as qdevops.io
     participant EM as EnvironmentManager
     participant CONT as Live Python container
     participant ECR as ECR
@@ -368,9 +368,15 @@ The SDK explicitly does **not** simulate locally. The whole point of
 having a server-side simulator backend is that a result you got today
 can be reproduced byte-for-byte tomorrow regardless of your laptop.
 
-### 2. Public API (`api.qdevops.io`)
+### 2. Public API (`qdevops.io`, canonical `api.qdevops.io`)
 
-Symfony / PHP. Responsible for:
+Symfony / PHP, served on the same hosts as the marketing site (the
+nginx config terminates both `qdevops.io` and `api.qdevops.io` — once
+the latter's CNAME is in DNS, both hostnames will serve the same
+routes; the SDK's `QDEVOPS_BASE_URL` default of `https://qdevops.io`
+will continue working unchanged).
+
+Responsible for:
 
 - AuthN / AuthZ — token scopes, project membership, rate limits.
 - Circuit hashing (so identical submissions can be deduplicated unless

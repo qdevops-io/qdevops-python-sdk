@@ -54,7 +54,7 @@ Sources: [`02_sqs_orchestration.mmd`](./02_sqs_orchestration.mmd) · [SVG](./02_
 
 How a backend string becomes a vendor SDK call. Credentials are
 fetched from the per-project vault on the worker side; they never
-transit `api.qdevops.io` and never enter logs. One result normaliser
+transit `qdevops.io` and never enter logs. One result normaliser
 unifies vendor outputs under a single schema.
 
 ![Backend adapter flow](./03_backend_adapter.png)
