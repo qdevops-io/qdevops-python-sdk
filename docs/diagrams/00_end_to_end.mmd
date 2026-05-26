@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    participant U as Your script
+    participant S as qdevops SDK
+    participant A as api.qdevops.io
+    participant Q as SQS (per-env)
+    participant W as Worker (Fargate)
+    participant B as Backend<br/>(simulator / IBM / Braket)
+    participant D as Dashboard<br/>(/bench, /runs/{id})
+
+    U->>S: submit_run(project, circuit, backend, params)
+    S->>A: POST /api/runs<br/>Authorization: Bearer pat_…
+    A->>A: Authenticate token,<br/>check project membership,<br/>compute circuit_hash
+    A->>Q: enqueue {run_id, circuit_hash, backend, params}
+    A-->>S: 202 Accepted {run_id, status: queued}
+    S-->>U: Submission(run_id=…)
+
+    Q->>W: dequeue
+    W->>W: resolve user backend creds<br/>(IBM/Braket only)
+    W->>B: execute circuit
+    B-->>W: counts + metadata
+    W->>A: PATCH /api/runs/{id} status=succeeded, result, duration_ms
+
+    loop wait_for_run() polls
+        U->>S: wait_for_run(run_id)
+        S->>A: GET /api/runs/{id}/status
+        A-->>S: { status, isTerminal }
+    end
+
+    S->>A: GET /api/runs/{id}<br/>(once terminal)
+    A-->>S: { result, duration_ms, ... }
+    S-->>U: Run(result=…, duration_ms=…)
+
+    A->>D: persist run — visible on /bench

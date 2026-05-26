@@ -1,0 +1,29 @@
+flowchart TB
+    subgraph ECR["ECR: qass/python-runner"]
+        direction TB
+        Tag["tag: latest<br/>(mutable, points at HEAD)"]
+        D1["digest sha256:abc…<br/>qiskit 1.0.2, aer 0.13.1<br/>numpy 1.26.4"]
+        D2["digest sha256:def…<br/>qiskit 1.0.3, aer 0.13.1<br/>numpy 1.26.4"]
+        D3["digest sha256:ghi…<br/>qiskit 1.1.0, aer 0.14.0<br/>numpy 2.0.0"]
+        Tag -.->|today| D3
+    end
+
+    subgraph Env["Environment table"]
+        direction TB
+        E1["env_id=10<br/>label: pinned-Apr15<br/>image: sha256:abc…<br/>seed: 0x4f2c"]
+        E2["env_id=24<br/>label: pinned-Jun02<br/>image: sha256:def…<br/>seed: 0x4f2c"]
+        E3["env_id=42<br/>label: pinned-Sep11<br/>image: sha256:ghi…<br/>seed: 0xa193"]
+    end
+
+    E1 ===|immutable bind| D1
+    E2 ===|immutable bind| D2
+    E3 ===|immutable bind| D3
+
+    Run1["Run #100<br/>env_id=10"] --> E1
+    Run2["Run #287<br/>env_id=24"] --> E2
+    Run3["Run #312<br/>env_id=42"] --> E3
+
+    classDef img fill:#dbeafe,stroke:#1d4ed8;
+    classDef env fill:#dcfce7,stroke:#16a34a;
+    class D1,D2,D3 img;
+    class E1,E2,E3 env;

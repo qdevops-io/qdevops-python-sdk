@@ -1,0 +1,16 @@
+flowchart TD
+    R0["Run #100<br/>circuit: bell<br/>mode: standard<br/>backend: simulator<br/>shots: 4096<br/>env_id: 10"]:::root
+
+    R1["Run #142<br/>parent: #100<br/>mode: zne<br/>scaleFactors: 1,3"]
+    R2["Run #143<br/>parent: #100<br/>mode: pec<br/>numSamples: 10"]
+
+    R3["Run #287<br/>parent: #142<br/>scaleFactors: 1,3,5"]
+    R4["Run #312<br/>parent: #287<br/>backend: ibm"]:::leaf
+
+    R0 -->|reproduce + change mode<br/>RERUN_REQUESTED| R1
+    R0 -->|reproduce + change mode<br/>RERUN_REQUESTED| R2
+    R1 -->|refine extrapolation| R3
+    R3 -->|switch backend| R4
+
+    classDef root fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a;
+    classDef leaf fill:#dcfce7,stroke:#16a34a,color:#14532d;

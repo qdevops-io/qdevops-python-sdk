@@ -160,7 +160,10 @@ Three properties this architecture buys you:
   required to call it, no Qiskit version conflicts in your container.
 
 A deeper architecture walk-through with six more diagrams lives in
-[`docs/architecture.md`](./docs/architecture.md):
+[`docs/architecture.md`](./docs/architecture.md) — each one also
+exported as PNG + SVG in the [diagram gallery](./docs/diagrams/) for
+use in slides, blog posts, or any Markdown viewer that doesn't render
+Mermaid:
 
 - [Execution flow](./docs/architecture.md#execution-flow) — the full
   state machine a run moves through, straight from the platform's

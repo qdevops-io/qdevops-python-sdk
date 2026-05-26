@@ -1,0 +1,29 @@
+flowchart LR
+    subgraph API["api.qdevops.io"]
+        D["Dispatcher<br/>(reads project.stage)"]
+    end
+
+    D -->|stage=prod| Qp[("runs_prod")]
+    D -->|stage=staging| Qs[("runs_staging")]
+    D -->|stage=sandbox| Qsb[("runs_sandbox")]
+
+    Qp -.->|N retries fail| DLQp[("runs_prod_dlq")]
+    Qs -.->|N retries fail| DLQs[("runs_staging_dlq")]
+    Qsb -.->|N retries fail| DLQsb[("runs_sandbox_dlq")]
+
+    subgraph Fargate["Fargate worker task"]
+        Cp["consumer: prod"]
+        Cs["consumer: staging"]
+        Csb["consumer: sandbox"]
+    end
+
+    Qp --> Cp
+    Qs --> Cs
+    Qsb --> Csb
+
+    Cp & Cs & Csb --> Adapter["Backend adapter<br/>(see below)"]
+
+    classDef q fill:#fef3c7,stroke:#d97706,color:#92400e;
+    classDef dlq fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+    class Qp,Qs,Qsb q;
+    class DLQp,DLQs,DLQsb dlq;

@@ -5,6 +5,10 @@ becomes a real result on a quantum backend. If you only care about the
 ten-second version, the diagram at the top of the [README](../README.md)
 is enough.
 
+> Every Mermaid diagram below is also exported as PNG + SVG in the
+> [diagram gallery](./diagrams/) for slides, blog posts, and Markdown
+> viewers that can't render Mermaid inline.
+
 ## Contents
 
 1. [End-to-end flow](#end-to-end-flow) — request to result, as a sequence
@@ -53,7 +57,7 @@ sequenceDiagram
     A-->>S: { result, duration_ms, ... }
     S-->>U: Run(result=…, duration_ms=…)
 
-    A->>D: persist run; visible on /bench
+    A->>D: persist run — visible on /bench
 ```
 
 ## Execution flow

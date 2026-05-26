@@ -1,0 +1,25 @@
+stateDiagram-v2
+    [*] --> submitted: POST /api/runs
+
+    submitted --> deduped: circuit_hash hit\n(force=false)
+    deduped --> [*]: returns cached result
+
+    submitted --> queued: enqueue to SQS
+    queued --> picked_up: worker dequeues
+    queued --> skipped_cancelled: user cancelled\nbefore pickup
+
+    picked_up --> started: adapter & creds ready
+    picked_up --> errored: worker init failure
+
+    started --> succeeded: counts produced
+    started --> failed: vendor backend returned an error
+    started --> errored: worker / SDK exception
+
+    succeeded --> verdict_stamped
+    failed --> verdict_stamped
+
+    verdict_stamped --> artifact_uploaded
+    artifact_uploaded --> [*]
+
+    skipped_cancelled --> [*]
+    errored --> [*]

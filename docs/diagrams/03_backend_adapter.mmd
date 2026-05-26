@@ -1,0 +1,27 @@
+flowchart LR
+    subgraph W["Worker process"]
+        direction TB
+        DQ["Dequeued message<br/>{run_id, circuit, backend, params, env_id}"]
+        RES["Resolver:<br/>backend → adapter"]
+        DQ --> RES
+    end
+
+    RES -->|backend=simulator| AS["SimulatorAdapter"]
+    RES -->|backend=ibm| AI["IBMAdapter"]
+    RES -->|backend=braket| AB["BraketAdapter"]
+
+    AS --> QSim["qiskit-aer<br/>(local in-process)"]
+    AI -->|GET project creds| V[("Credential vault<br/>(per-project)")]
+    AB -->|GET project creds| V
+    V -.->|IBM_QUANTUM_TOKEN| AI
+    V -.->|AWS access key| AB
+    AI --> IBM["IBMQ Runtime"]
+    AB --> BRK["braket-sdk"]
+
+    QSim & IBM & BRK -->|raw counts| Norm["Result normaliser"]
+    Norm -->|"{counts, duration_ms,<br/>queue_wait_ms, vendor_meta}"| Out["PATCH /api/runs/{id}"]
+
+    classDef vendor fill:#fef3c7,stroke:#d97706,color:#92400e;
+    classDef ours fill:#f0fdf4,stroke:#16a34a,color:#14532d;
+    class IBM,BRK vendor;
+    class AS,AI,AB,QSim,Norm,V ours;

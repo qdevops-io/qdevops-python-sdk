@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant API as api.qdevops.io
+    participant EM as EnvironmentManager
+    participant CONT as Live Python container
+    participant ECR as ECR
+
+    Note over U,ECR: T0 — pin moment
+    U->>API: POST /projects/{id}/environments/pin
+    API->>EM: newEnvironment(project, stage, "pinned-Apr15", actor)
+    EM->>CONT: probe live manifest<br/>(qiskit/aer/numpy versions, RNG seed)
+    CONT-->>EM: {qiskit:1.0.2, aer:0.13.1, …, seed:0x4f2c}
+    EM->>ECR: describe current HEAD image
+    ECR-->>EM: digest sha256:abc…
+    EM-->>API: Environment{id:10, image:sha256:abc…, manifest, seed}
+    API-->>U: env_id=10, set as project default
+
+    Note over U,ECR: T0 + 6 months (qiskit 1.1.0 is now `latest`)
+    U->>API: POST /api/runs<br/>{circuit:"bell", env_id:10}
+    API->>ECR: pull sha256:abc… (immutable)
+    ECR-->>API: image (qiskit 1.0.2, exactly as in April)
+    API->>CONT: run with pinned manifest + seed 0x4f2c
+    CONT-->>API: counts (bit-identical to original run)
+
+    Note over U,API: continuous drift check
+    U->>API: GET /environments/10
+    API->>EM: detectDrift(env)
+    EM->>CONT: probe live manifest
+    EM-->>API: drift report:<br/>{qiskit: 1.0.2 → 1.1.0,<br/>aer: 0.13.1 → 0.14.0}
+    API-->>U: render `/environments/10`<br/>with drift badge
